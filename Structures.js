@@ -109,12 +109,13 @@ class PCB {
 class Dispatcher {
     #PCB_processus ;
     #NbChangementContexte ;
-    #signal // booléen
+    #Signal 
 
     /* Constructeur */
     constructor() {
         this.#PCB_processus = [] ;
         this.#NbChangementContexte = 0 ;
+        this.#Signal = false ;
     }
 
     /* Getters */
@@ -129,6 +130,9 @@ class Dispatcher {
     getNbChangementContexte = function(){
         return this.#NbChangementContexte ;
     }
+    getSignal = function(){
+        return this.#Signal ;
+    }
 
     /* Setters */
     setPCB_processus = function(tab) {
@@ -139,6 +143,9 @@ class Dispatcher {
     }
     setNbChangementContexte = function(nb){
         this.#NbChangementContexte = nb ;
+    }
+    setSignal = function(etat) {
+        this.#Signal = etat ;
     }
 
     /* Méthodes */
@@ -154,6 +161,13 @@ class Dispatcher {
     IncrementerNb = function() {
         this.#NbChangementContexte ++ ;
         return true ;
+    }
+    DispatcherPret = function() {
+        if (this.#Signal === true){
+            return true ;
+        }else{
+            return false ;
+        }
     }
 }
 
