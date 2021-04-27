@@ -46,11 +46,10 @@ class Processeur {
     afficher = function() {
         console.log("\n-----------Processeur-----------") ;
         console.log("Num : "+this.#Num) ;
-        console.log("PID : "+this.#PID) ;
-        console.log("Contexte : "+this.#Contexte) ;
+        console.log("Processus ID : "+this.#Processus.getPCB().getPID()) ;
+        console.log("Contexte du processus : "+this.#Processus.getPCB().getContexte()) ;
         console.log("Temps d'utilisation : "+this.#Temps_utilisation +"s") ; 
         console.log("--------------------------------") ;
-    }
 
     bloquer = function() {
 
