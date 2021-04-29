@@ -1,4 +1,5 @@
 
+
 //               Créer la classe Process et ses methodes
 
 class Processes {
@@ -74,10 +75,10 @@ class Processes {
 function afficher(){
        let process = new Processes("aghiles",18,15,23,50,1); 
        console.log('ProcessID: '+process.ProcessID);
-       console.log( 'ArrivalTime:'+ process.ArrivalTime);
-       console.log('ExecutionTime:'+process.ExecutionTime);
-       console.log('WaitingTime:'+ process.waitingTime);
-       console.log('Turnaroundtime:'+ process.Turnaroundtime);
+       console.log( 'ArrivalTime:'+ process.ArrivalTime+' Ms.');
+       console.log('ExecutionTime:'+process.ExecutionTime+' Ms.');
+       console.log('WaitingTime:'+ process.waitingTime+'Ms.');
+       console.log('Turnaroundtime:'+ process.Turnaroundtime+'Ms.');
        console.log( 'priority:'+process.priorite);
 
         };   
