@@ -340,8 +340,11 @@ class File {
     #files;
     
     /* Constructeur */
-    constructor(){
-        this.#files = new Array() ;
+    constructor(nombre_files){
+        this.#files = new Array(nombre_files) ;
+        for(let i=0 ; i<nombre_files ; i++){
+            this.#files[i] = new File() ;
+        }
     }
    
    /*Ordonnanceur_MNAR() */
