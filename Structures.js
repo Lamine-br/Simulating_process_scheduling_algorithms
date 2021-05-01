@@ -27,7 +27,7 @@ class Processeur {
     setNum = function(num) {
         this.#Num = num ;
     }
-    setPID = function(processus) {
+    setProcessus = function(processus) {
         this.#Processus = processus ;
     }
     setTempsUtilisation = function(temps) {
@@ -71,6 +71,9 @@ class Processus {
     #TempsRestant;
     #Priorite;
     #Interruptions;
+    #TempsAttente ;
+    #TempsSejour ;
+    #TempsReponse ;
 
     /* Constructeur */
     constructor(pcb,T1,T2,T3,prio,It)
@@ -104,6 +107,15 @@ class Processus {
     getInterruptions = function(){
         return this.#Interruptions ;
     }
+    getTempsAttente = function(){
+        return this.#TempsAttente ;
+    }
+    getTempsSejour = function(){
+        return this.#TempsSejour ;
+    }
+    getTempsReponse = function(){
+        return this.#TempsReponse ;
+    }
 
     /* Setters */
 
@@ -125,7 +137,15 @@ class Processus {
     setInterruptions = function(It){
         this.#Interruptions = It ;
     }
-   
+    setTempsAttente = function(t){
+        this.#TempsAttente = t ;
+    }
+    setTempsSejour = function(t){
+        this.#TempsSejour = t ;
+    }
+    setTempsReponse = function(t){
+        this.#TempsReponse = t ;
+    }
     /* Affichage */
     afficher = function(){
         console.log("\n**************** Processus ****************") ;
@@ -134,10 +154,13 @@ class Processus {
         console.log("Temps d'exécution : "+this.#TempsExecution) ;
         console.log("Temps restant d'exécution : "+this.#TempsRestant) ;
         console.log("Priorité : "+this.#Priorite) ;
-        console.log("Interruptions : ") ;
+        console.log("Interruptions : "+this.#Interruptions.length) ;
         for (let i=0 ; i<this.#Interruptions.length ; i++){
             this.#Interruptions[i].afficher() ;
         }   
+        console.log("Temps d'attente : "+this.#TempsAttente) ;
+        console.log("Temps de séjour : "+this.#TempsSejour) ;
+        console.log("Temps de réponse : "+this.#TempsReponse) ;
         console.log("\n*******************************************") ;
     }
 }
@@ -367,7 +390,7 @@ class Dispatcher {
 
     /* Getters */
     getPCB_Processus = function(){
-        return PCB_processus ;
+        return this.#PCB_processus ;
     }
     getNbChangementContexte = function(){
         return this.#NbChangementContexte ;
@@ -409,7 +432,119 @@ class Dispatcher {
     }
 }
 
+/*------------------------- Déclaration d'une classe globale --------------------------*/
+
+class Scheduler {
+    #processeur ;
+    #dispatcher ;
+    #files ;
+    #fileBloquee ;
+    #processus ;
+
+    /* Constructeur */
+    constructor(processeur, dispatcher , files , fileBloquee , processus){
+        this.#processeur = processeur ;
+        this.#dispatcher = dispatcher ;
+        this.#files = files ;
+        this.#fileBloquee = fileBloquee ;
+        this.#processus = processus ;
+    }
+
+    /* Getters */
+    getFiles = function(){
+        return this.#files ;
+    }
+    getProcesseur = function(){
+        return this.#processeur ;
+    }
+    getProcessus = function(){
+        return this.#processus ;
+    }
+    getDispatcher = function(){
+        return this.#dispatcher ;
+    }
+    getFileBloquee = function(){
+        return this.#fileBloquee ;
+    }
+
+    /* Setters */
+
+    CreerProcessus()
+
+    ActiverProcessus(num_file){
+        let process = new Processus() ;
+        this.#files[num_file].Defiler(process) ;
+        this.#processeur.setProcessus(process) ;
+        this.#dispatcher.setSignal(false) ;
+        process.getPCB().setEtat("Actif") ;
+      /*  let a = process.getPCB().getContexte() ;
+        let b = a [0] ;
+        process.getPCB().setContexte(a-b+(b+1)) ; */
+    }
+
+    DesactiverProcessus(num_file){
+        this.#processeur.getProcessus().getPCB().setEtat("Pret") ;
+        this.#files[num_file].Enfiler(this.#processeur.getProcessus()) ;
+        this.#processeur.setProcessus(undefined) ;
+        this.#dispatcher.setSignal(true) ;
+    }
+
+    BloquerProcessus(){
+        this.#processeur.getProcessus().getPCB().setEtat("Bloque") ;
+        this.#fileBloquee.Enfiler(this.#processeur.getProcessus()) ;
+        this.#processeur.setProcessus(undefined) ;
+        this.#dispatcher.setSignal(true) ;
+    }
+
+    ReveillerProcessus(num_file , pos){
+        let process = new Processus() ;
+        // permut(0,pos);
+        this.#fileBloquee.Defiler(process) ;
+        this.#files[num_file].Enfiler(process) ;
+        process.getPCB().setEtat("Pret") ;
+    }
+
+    DetruireProcessus(){
+        delete (this.#processeur.getProcessus()) ;
+        this.#processeur.setProcessus(undefined) ;
+        this.#dispatcher.setSignal(true) ;
+    }
+}
+
 /*---------------------------------------------------------------------------*/
 /* Main */
+let pcb1 = new PCB(1 , "Pret" , "Tour1") ;
+let pcb2 = new PCB(2 , "Pret" , "Tour1") ;
+let pcb3 = new PCB(3 , "Pret" , "Tour1") ;
+let pcb4 = new PCB(4 , "Pret" , "Tour1") ;
+let it1 = new Interruption("Lecture Disque" , 5 , 2) ;
+let It1 = [it1] ;
+let it2 = new Interruption("Lecture Mémoire" , 4 , 2) ;
+let It2 = [it2] ;
+let process1 = new Processus(pcb1 , 20 , 0 , 20 , 1 , It1) ;
+let process2 = new Processus(pcb2 , 30 , 2 , 15 , 2 , It2) ;
+let process3 = new Processus(pcb3 , 20 , 0 , 20 , 1 ) ;
+let process4 = new Processus(pcb4 , 30 , 2 , 15 , 2 ) ;
+let files = new File_Multiniveaux(1) ;
+let file = new File() ;
+file.Enfiler(process1) ;
+file.Enfiler(process2) ;
+files[0] = file ;
+let processeur = new Processeur() ;
+let dispatcher = new Dispatcher() ;
+let tab = [pcb1 , pcb2] ;
+dispatcher.setPCB_processus(tab) ;
+let fileBloquee = new File() ;
+let processus = [process3 , process4] ;
+
+let scheduler = new Scheduler(processeur , dispatcher , files , fileBloquee , processus) ;
+scheduler.ActiverProcessus(0) ;
+//console.log(scheduler.getFiles()[0].getFile()[0].afficher()) ;
+//console.log(scheduler.getProcesseur().getProcessus().afficher()) ;
+scheduler.DesactiverProcessus(0) ;
+console.log(scheduler.getFiles()[0].getFile()[0].afficher()) ;
+console.log(scheduler.getFiles()[0].getFile()[1].afficher()) ;
+console.log(scheduler.getProcesseur().getProcessus()) ;
+console.log(dispatcher.getPCB_Processus()[0].getEtat()) ;
 
 
