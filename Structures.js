@@ -369,6 +369,23 @@ class File {
             this.#files[i] = new File() ;
         }
     }
+
+     /* Getters */
+    getFiles(){
+        return this.#files ;
+    }
+    getFile(nb){
+        return this.#files[nb] ;
+    }
+
+    /* Setters */
+    setFiles(files){
+        this.#files = files ;
+    }
+
+    setFile(nb , file){
+        this.#files[nb] = file ;
+    }
    
    /*Ordonnanceur_MNAR() */
    /*Ordonnanceur_MNSR() */
