@@ -85,6 +85,9 @@ class Processus {
         this.#Priorite = prio ;
         this.#Interruptions = [] ;
         this.#Interruptions = It ;
+        this.#TempsAttente = 0 ;
+        this.#TempsSejour = 0 ;
+        this.#TempsReponse = 0 ;
     }; 
 
     /* Getters */
@@ -147,10 +150,11 @@ class Processus {
         this.#TempsReponse = t ;
     }
 
-    DetruireInterruption(nb){
-        delete (this.#Interruptions.splice(nb , 1)) ;
+    /* ----------------------------- */
+    DetruireInterruption(pos){
+        delete (this.#Interruptions.splice(pos, 1)) ;
     }
-                
+
     /* Affichage */
     afficher = function(){
         console.log("\n**************** Processus ****************") ;
@@ -287,8 +291,8 @@ class File {
         return this.#Queue ;
     }
 
-   File_Vide = function (){
-   if ( this.#file.length == 0) {
+   FileVide = function (){
+   if ( this.#file.length === 0) {
        return(true);
    }else{
        return(false);
@@ -297,7 +301,7 @@ class File {
    
    Enfiler = function (processus) {
         this.#Queue += 1 ;
-        if (this.File_Vide()){
+        if (this.FileVide()){
             this.#Tete += 1 ;
         }
         this.#file.push(processus) ;
@@ -305,7 +309,7 @@ class File {
        }
    
    Defiler = function (processus) {
-   if (this.File_Vide()){
+   if (this.FileVide()){
        return false ;
    } else{
        let b = this.#file.shift() ;
@@ -316,14 +320,14 @@ class File {
        processus.setPriorite(b.getPriorite()) ;
        processus.setInterruptions(b.getInterruptions()) ;
        this.#Queue -= 1;
-       if ( this.File_Vide()){
+       if ( this.FileVide()){
            this.#Tete -= 1;
        }
        return true;
    }
    }
 
-    Permut(pos1 , pos2) {
+   Permut(pos1 , pos2) {
         let p1 = new Processus() ;
         p1 = this.#file[pos1] ;
         this.#file[pos1] = this.#file[pos2] ;
@@ -332,7 +336,7 @@ class File {
    
    /*Ordonnanceur_FIFO() */
    /*Ordonnanceur_SJF() */
-   }
+}
    
 /*------------------------- Déclaration d'une File d'Attente -------------------------*/
    /* Héritage de la classe File */
@@ -372,17 +376,17 @@ class File {
 /*------------------------- Déclaration d'une File Multiniveaux -------------------------*/
  
    class File_Multiniveaux {
-    #files;
+    #files ;
     
     /* Constructeur */
     constructor(nombre_files){
         this.#files = new Array(nombre_files) ;
         for(let i=0 ; i<nombre_files ; i++){
-            this.#files[i] = new File() ;
+            this.#files[i] = new File_Attente() ;
         }
     }
 
-     /* Getters */
+    /* Getters */
     getFiles(){
         return this.#files ;
     }
@@ -399,8 +403,20 @@ class File {
         this.#files[nb] = file ;
     }
    
-   /*Ordonnanceur_MNAR() */
-   /*Ordonnanceur_MNSR() */
+   /*Ordonnanceur_FMAR() */
+   Ordonnanceur_FMAR(){
+        let i = 0;
+        for( i=0 ; i < this.#files.length ; i++){
+            if(this.#files[i].FileVide()){
+                continue ;
+            }else{
+                return i ;
+            }
+        }
+        return -1 ;
+        
+   }
+   /*Ordonnanceur_FMSR() */
    }
 
 /*------------------------- Déclaration du Dispatcher -------------------------*/
@@ -414,7 +430,7 @@ class Dispatcher {
     constructor() {
         this.#PCB_processus = [] ;
         this.#NbChangementContexte = 0 ;
-        this.#Signal = false ;
+        this.#Signal = true ;
     }
 
     /* Getters */
@@ -445,19 +461,12 @@ class Dispatcher {
         return true ;
     }
     SupprimerPCB = function(pcb) {
-        this.#PCB_processus.splice(this.#PCB_processus.indexOf(pcb)) ;
+        this.#PCB_processus.splice(this.#PCB_processus.indexOf(pcb),1) ;
         return true ;
     }
     IncrementerNb = function() {
         this.#NbChangementContexte ++ ;
         return true ;
-    }
-    DispatcherPret = function() {
-        if (this.#Signal === true){
-            return true ;
-        }else{
-            return false ;
-        }
     }
 }
 
@@ -497,6 +506,21 @@ class Scheduler {
     }
 
     /* Setters */
+    setProcesseur = function(processeur){
+        this.#processeur = processeur ;
+    }
+    setDispatcher = function(dispatcher){
+        this.#dispatcher = dispatcher ;
+    }
+    setFiles = function(files){
+        this.#files = files ;
+    }
+    setFileBloquee = function(file){
+        this.#fileBloquee = file ;
+    }
+    setProcessus = function(processus){
+        this.#processus = processus ;
+    }
 
     // Rajoute le processus dans le tableau en le gardant tjrs trié
     AjouterProcessus(process){
@@ -537,13 +561,13 @@ class Scheduler {
         process.setInterruptions(this.#processus[position].getInterruptions()) ;
         this.#processus.splice(position,1) ;
         this.#dispatcher.AjouterPCB(process.getPCB()) ;
-        this.#files[num_file].Enfiler(process) ;
+        this.#files.getFile(num_file).Enfiler(process) ;
     }
 
     // num_file : numero de la file d'ou défiler le processus en question
     ActiverProcessus(num_file){
         let process = new Processus() ;
-        this.#files[num_file].Defiler(process) ;
+        this.#files.getFile(num_file).Defiler(process) ;
         this.#processeur.setProcessus(process) ;
         this.#dispatcher.setSignal(false) ;
         process.getPCB().setEtat("Actif") ;
@@ -551,14 +575,26 @@ class Scheduler {
 
     // num_file : numero de la file ou enfiler le processus
     DesactiverProcessus(num_file){
+
+        // Changement de Contexte
         this.#processeur.getProcessus().getPCB().setEtat("Pret") ;
-        this.#files[num_file].Enfiler(this.#processeur.getProcessus()) ;
+        let a = this.#processeur.getProcessus().getPCB().getContexte() ;
+        let b = a [4] ;
+        this.#processeur.getProcessus().getPCB().setContexte('Tour'+String.fromCharCode(b.charCodeAt()+1)) ;
+
+        this.#files.getFile(num_file).Enfiler(this.#processeur.getProcessus()) ;
         this.#processeur.setProcessus(undefined) ;
         this.#dispatcher.setSignal(true) ;
     }
 
     BloquerProcessus(){
+
+        // Changement de Contexte
         this.#processeur.getProcessus().getPCB().setEtat("Bloque") ;
+        let a = this.#processeur.getProcessus().getPCB().getContexte() ;
+        let b = a [4] ;
+        this.#processeur.getProcessus().getPCB().setContexte('Tour'+String.fromCharCode(b.charCodeAt()+1)) ; 
+
         this.#fileBloquee.Enfiler(this.#processeur.getProcessus()) ;
         this.#processeur.setProcessus(undefined) ;
         this.#dispatcher.setSignal(true) ;
@@ -570,7 +606,7 @@ class Scheduler {
         let process = new Processus() ;
         this.#fileBloquee.Permut(0 , position) ;
         this.#fileBloquee.Defiler(process) ;
-        this.#files[num_file].Enfiler(process) ;
+        this.#files.getFile(num_file).Enfiler(process) ;
         process.getPCB().setEtat("Pret") ;
     }
 
@@ -580,43 +616,130 @@ class Scheduler {
         this.#dispatcher.setSignal(true) ;
     }
 
-}
+    /*****************Ordonnanceur Files Multiniveaux Avec Recyclage*****************/
+    Ordonnanceur_FMAR(){
+        let i = this.#processus.length , j = 0 , t = 0 , h = 0 , quantum = 0 , arret = false , cpt = 0 , num_file = 0 , blocage = false;
+        while(j !== i){
+            // Vérifier les Temps d'arrivée des processus 
+             while(h < this.#processus.length){
+                if(this.#processus[h].getTempsArrive() === t){
+                    console.log('t = '+t+' : '+'Création du processus'+this.#processus[h].getPCB().getPID()) ;
+                    this.CreerProcessus(h , 0) ;
+                }else{
+                    if(this.#processus[h].getTempsArrive() > t){
+                        break ;
+                    }
+                    h++ ;
+                }
+            }
+            h = 0 ;
+            // Si le processeur n'est pas actif
+            if (this.#dispatcher.getSignal() === true){
+                num_file = this.#files.Ordonnanceur_FMAR() ;
+                this.ActiverProcessus(num_file) ;
+                console.log('t = '+t+' : '+'Activation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                if(this.#processeur.getProcessus().getTempsExecution() === this.#processeur.getProcessus().getTempsRestant){
+                    this.#processeur.getProcessus().setTempsReponse(this.#processeur.getProcessus().getTempsAttente()) ;
+                }
+                quantum = this.#files.getFile(num_file).getQuantum() ;
+                this.#dispatcher.setSignal(false) ;
+            }else{ //Si le processeur est actif
+                if(this.#processeur.getProcessus().getTempsRestant() === 0){
+                    console.log('t = '+t+' : '+'Destruction du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                    this.DetruireProcessus() ;
+                    j++ ;
+                    this.#dispatcher.setSignal(true) ;
+                    cpt = 0 ;
+                    arret = true ;
+                }else{
+                    if(cpt === quantum){
+                    if(num_file < this.#files.getFiles().length - 1){
+                    console.log('t = '+t+' : '+'Désactivation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                    this.DesactiverProcessus(num_file + 1) ;
+                    }else{
+                        console.log('t = '+t+' : '+'Désactivation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                        this.DesactiverProcessus(num_file) ;
+                    }
+                    this.#dispatcher.setSignal(true) ;
+                    cpt = 0 ;
+                    arret = true ;
+                    }else{
+                        if(this.#processeur.getProcessus().getInterruptions().length !== 0){
+                            if(this.#processeur.getProcessus().getInterruptions()[0].getTempsDeclenchement() === this.#processeur.getProcessus().getTempsExecution() - this.#processeur.getProcessus().getTempsRestant()){
+                                this.#processeur.getProcessus().setPriorite(num_file) ;
+                                console.log('t = '+t+' : '+'Bloquage du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                                this.BloquerProcessus() ;
+                                blocage = true ;
+                                cpt = 0 ;
+                                this.#dispatcher.setSignal(true) ;
+                                arret = true ;
+                            }
+                         }
+                    }
+                }
+                }
+            if (!arret){
+                for (let j = 0 ; j<this.#fileBloquee.getFile().length ; j++){
+                    this.#fileBloquee.getFile()[j].getInterruptions()[0].setTempsBlocage(this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() - 1) ;
+                    if(blocage === true){
+                        this.#fileBloquee.getFile()[this.#fileBloquee.getFile().length - 1].getInterruptions()[0].setTempsBlocage(this.#fileBloquee.getFile()[this.#fileBloquee.getFile().length - 1].getInterruptions()[0].getTempsBlocage() + 1) ;
+                    }
+                    this.#fileBloquee.getFile()[j].setTempsSejour(this.#fileBloquee.getFile()[j].getTempsSejour() + 1) ;
+                    if (this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() === 0){
+                        if(this.#fileBloquee.getFile()[j].getPriorite() < this.#files.getFiles().length- 1){
+                            console.log('t = '+t+' : '+'Réveil du processus'+this.#fileBloquee.getFile()[j].getPCB().getPID()) ;
+                            console.log(this.#fileBloquee.getFile()[j]) ;
+                            this.ReveillerProcessus(j , this.#fileBloquee.getFile()[j].getPriorite() + 1) ;
+                        }else{
+                            console.log('t = '+t+' : '+'Réveil du processus'+this.#fileBloquee.getFile()[j].getPCB().getPID()) ;
+                            this.ReveillerProcessus(j , this.#fileBloquee.getFile()[j].getPriorite()) ;
+                        }
+                    }
+                }
+                for(let j = 0 ; j<this.#files.getFiles().length ; j++){
+                    for(let k = 0 ; k<this.#files.getFile(j).length ; k++){
+                        this.#files.getFile(j)[k].setTempsAttente(this.#files.getFile(j)[k].getTempsAttente()+1) ;
+                        this.#files.getFile(j)[k].setTempsSejour(this.#files.getFile(j)[k].getTempsSejour()+1) ;
+                    }
+                }
+                this.#processeur.getProcessus().setTempsRestant(this.#processeur.getProcessus().getTempsRestant() - 1) ;
+                cpt++ ;
+                this.#processeur.setTempsUtilisation(this.#processeur.getTempsUtilisation()+1) ;
+                t++ ;
+            }else{
+                arret = false ;
+            }
+            blocage = false ;
+        }
+    }
 }
 
 /*---------------------------------------------------------------------------*/
 /* Main */
+
 let pcb1 = new PCB(1 , "Pret" , "Tour1") ;
 let pcb2 = new PCB(2 , "Pret" , "Tour1") ;
 let pcb3 = new PCB(3 , "Pret" , "Tour1") ;
 let pcb4 = new PCB(4 , "Pret" , "Tour1") ;
+let pcb5 = new PCB(5 , "Pret" , "Tour1") ;
 let it1 = new Interruption("Lecture Disque" , 5 , 2) ;
 let It1 = [it1] ;
 let it2 = new Interruption("Lecture Mémoire" , 4 , 2) ;
 let It2 = [it2] ;
-let process1 = new Processus(pcb1 , 20 , 0 , 20 , 1 , It1) ;
-let process2 = new Processus(pcb2 , 30 , 2 , 15 , 2 , It2) ;
-let process3 = new Processus(pcb3 , 20 , 0 , 20 , 1 ) ;
-let process4 = new Processus(pcb4 , 30 , 2 , 15 , 2 ) ;
+let process1 = new Processus(pcb1 , 0 , 20 , 20 , 1 , It1) ;
+let process2 = new Processus(pcb2 , 2 , 30 , 15 , 2 , It2) ;
+let process3 = new Processus(pcb3 , 0 , 20 , 20 , 1 , []) ;
+let process4 = new Processus(pcb4 , 2 , 30 , 15 , 2 , []) ;
+let process5 = new Processus(pcb5 , 2 , 25 , 15 , 3 , []) ;
 let files = new File_Multiniveaux(1) ;
-let file = new File() ;
-file.Enfiler(process1) ;
-file.Enfiler(process2) ;
-files[0] = file ;
+let file = new File_Attente(0 , 5) ;
+files.setFile(0 , file) ;
 let processeur = new Processeur() ;
 let dispatcher = new Dispatcher() ;
 let tab = [pcb1 , pcb2] ;
 dispatcher.setPCB_processus(tab) ;
 let fileBloquee = new File() ;
-let processus = [process3 , process4] ;
+let processus = [process1 , process2] ;
 
 let scheduler = new Scheduler(processeur , dispatcher , files , fileBloquee , processus) ;
-scheduler.ActiverProcessus(0) ;
-//console.log(scheduler.getFiles()[0].getFile()[0].afficher()) ;
-//console.log(scheduler.getProcesseur().getProcessus().afficher()) ;
-scheduler.DesactiverProcessus(0) ;
-console.log(scheduler.getFiles()[0].getFile()[0].afficher()) ;
-console.log(scheduler.getFiles()[0].getFile()[1].afficher()) ;
-console.log(scheduler.getProcesseur().getProcessus()) ;
-console.log(dispatcher.getPCB_Processus()[0].getEtat()) ;
-
-
+scheduler.Ordonnanceur_FMAR() ;
