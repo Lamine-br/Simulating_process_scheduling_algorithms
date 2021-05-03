@@ -146,6 +146,11 @@ class Processus {
     setTempsReponse = function(t){
         this.#TempsReponse = t ;
     }
+
+    DetruireInterruption(nb){
+        delete (this.#Interruptions.splice(nb , 1)) ;
+    }
+                
     /* Affichage */
     afficher = function(){
         console.log("\n**************** Processus ****************") ;
