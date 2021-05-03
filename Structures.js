@@ -469,19 +469,58 @@ class Scheduler {
 
     /* Setters */
 
-    CreerProcessus()
+    // Rajoute le processus dans le tableau en le gardant tjrs trié
+    AjouterProcessus(process){
+        let t = process.getTempsArrive() ;
+        let min = 0 ;
+        let max = this.#processus.length ;
+        let stop = false ; 
+        let j = 0 ;
+        while(min <= max && !stop){
+            j = (min + max) / 2 ;
+            if(t = this.#processus[j])
+            {
+                stop = true ;
+            }else
+            {
+                if(t < this.#processus[j]){
+                    max = j - 1 ;
+                }else{
+                    min = j + 1 ;
+                }
+            }
+        }
+        if (min > max){
+            j = min ;
+        }
+        this.#processus.splice(j , 0 , process) ;
+    }
 
+    // position : sa position dans la tableau de processus[]
+    // num_file : numero de la file ou le mettre (0 dans les cas à file simple)
+    CreerProcessus(position , num_file){
+        let process = new Processus() ;
+        process.setPCB(this.#processus[position].getPCB()) ;
+        process.setTempsArrive(this.#processus[position].getTempsArrive()) ;
+        process.setTempsExecution(this.#processus[position].getTempsExecution()) ;
+        process.setTempsRestant(this.#processus[position].getTempsRestant()) ;
+        process.setPriorite(this.#processus[position].getPriorite()) ;
+        process.setInterruptions(this.#processus[position].getInterruptions()) ;
+        this.#processus.splice(position,1) ;
+        this.#dispatcher.AjouterPCB(process.getPCB()) ;
+        this.#files[num_file].Enfiler(process) ;
+    }
+
+    // num_file : numero de la file d'ou défiler le processus en question
     ActiverProcessus(num_file){
         let process = new Processus() ;
         this.#files[num_file].Defiler(process) ;
         this.#processeur.setProcessus(process) ;
         this.#dispatcher.setSignal(false) ;
         process.getPCB().setEtat("Actif") ;
-      /*  let a = process.getPCB().getContexte() ;
-        let b = a [0] ;
-        process.getPCB().setContexte(a-b+(b+1)) ; */
     }
 
+    // num_file : numero de la file ou enfiler le processus
     DesactiverProcessus(num_file){
         this.#processeur.getProcessus().getPCB().setEtat("Pret") ;
         this.#files[num_file].Enfiler(this.#processeur.getProcessus()) ;
@@ -496,9 +535,11 @@ class Scheduler {
         this.#dispatcher.setSignal(true) ;
     }
 
-    ReveillerProcessus(num_file , pos){
+    // num_file : numero de la file ou enfiler le processus
+    // pos : position du processus dans la file des processus bloqués
+    ReveillerProcessus(position , num_file){
         let process = new Processus() ;
-        // permut(0,pos);
+        this.#fileBloquee.Permut(0 , position) ;
         this.#fileBloquee.Defiler(process) ;
         this.#files[num_file].Enfiler(process) ;
         process.getPCB().setEtat("Pret") ;
@@ -509,6 +550,8 @@ class Scheduler {
         this.#processeur.setProcessus(undefined) ;
         this.#dispatcher.setSignal(true) ;
     }
+
+}
 }
 
 /*---------------------------------------------------------------------------*/
