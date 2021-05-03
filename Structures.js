@@ -317,6 +317,13 @@ class File {
        return true;
    }
    }
+
+    Permut(pos1 , pos2) {
+        let p1 = new Processus() ;
+        p1 = this.#file[pos1] ;
+        this.#file[pos1] = this.#file[pos2] ;
+        this.#file[pos2] = p1 ;
+   }
    
    /*Ordonnanceur_FIFO() */
    /*Ordonnanceur_SJF() */
