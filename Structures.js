@@ -152,7 +152,7 @@ class Processus {
 
     /* ----------------------------- */
     DetruireInterruption(pos){
-        delete (this.#Interruptions.splice(pos, 1)) ;
+        delete(this.#Interruptions.splice(pos, 1)) ;
     }
 
     /* Affichage */
@@ -670,7 +670,7 @@ class Scheduler {
                         cpt = 0 ;
                         arret = true ;
                         }else{
-                            if(this.#processeur.getProcessus().getInterruptions().length !== 0){
+                            if(this.#processeur.getProcessus().getInterruptions().length > 0){
                                 if(this.#processeur.getProcessus().getInterruptions()[0].getTempsDeclenchement() === this.#processeur.getProcessus().getTempsExecution() - this.#processeur.getProcessus().getTempsRestant()){
                                     this.#processeur.getProcessus().setPriorite(num_file) ;
                                     console.log('t = '+t+' : '+'Bloquage du processus'+this.#processeur.getProcessus().getPCB().getPID()+': Interruption') ;
@@ -687,18 +687,13 @@ class Scheduler {
             if (!arret){
                 for (let j = 0 ; j<this.#fileBloquee.getFile().length ; j++){
                     if (this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() === 0){
-                        if(this.#fileBloquee.getFile()[j].getPriorite() < this.#files.getFiles().length- 1){
-                            console.log('t = '+(t+1)+' : '+'Réveil du processus'+this.#fileBloquee.getFile()[j].getPCB().getPID()) ;
-                            console.log(this.#fileBloquee.getFile()[j]) ;
-                            this.ReveillerProcessus(j , this.#fileBloquee.getFile()[j].getPriorite() + 1) ;
-                        }else{
-                            console.log('t = '+(t+1)+' : '+'Réveil du processus'+this.#fileBloquee.getFile()[j].getPCB().getPID()) ;
-                            this.ReveillerProcessus(j , this.#fileBloquee.getFile()[j].getPriorite()) ;
-                        }
+                        console.log('t = '+(t)+' : '+'Réveil du processus'+this.#fileBloquee.getFile()[j].getPCB().getPID()) ;
+                        this.#fileBloquee.getFile()[j].DetruireInterruption(0) ;
+                        this.ReveillerProcessus(j , this.#fileBloquee.getFile()[j].getPriorite()) ;
                         arret = true ;
                     }
                 }
-                for (let j = 0 ; j<this.#fileBloquee.getFile().length ; j++){
+                for (let j = 0 ;j<this.#fileBloquee.getFile().length ; j++){
                     this.#fileBloquee.getFile()[j].getInterruptions()[0].setTempsBlocage(this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() - 1) ;
                     this.#fileBloquee.getFile()[j].setTempsSejour(this.#fileBloquee.getFile()[j].getTempsSejour() + 1) ;
                 }
@@ -720,6 +715,7 @@ class Scheduler {
                 arret = false ;
             }
         }
+        console.log("\n--------Fin de l'éxecution---------") ;
     }
 }
 
@@ -734,21 +730,24 @@ let pcb5 = new PCB(5 , "Pret" , "Tour1") ;
 let it1 = new Interruption("Lecture Disque" , 5 , 2) ;
 let It1 = [it1] ;
 let it2 = new Interruption("Lecture Mémoire" , 4 , 2) ;
-let It2 = [it2] ;
+let it3 = new Interruption("Lecture Mémoire" , 2 , 19) ;
+let It2 = [it2,it3] ;
 let process1 = new Processus(pcb1 , 0 , 20 , 20 , 1 , It1) ;
 let process2 = new Processus(pcb2 , 2 , 30 , 30 , 2 , It2) ;
-let process3 = new Processus(pcb3 , 0 , 20 , 20 , 1 , []) ;
+let process3 = new Processus(pcb3 , 0 , 10 , 10 , 1 , []) ;
 let process4 = new Processus(pcb4 , 2 , 30 , 15 , 2 , []) ;
 let process5 = new Processus(pcb5 , 2 , 25 , 15 , 3 , []) ;
-let files = new File_Multiniveaux(1) ;
+let files = new File_Multiniveaux(2) ;
 let file = new File_Attente(0 , 5) ;
+let file1 = new File_Attente(0 , 10) ;
 files.setFile(0 , file) ;
+files.setFile(1 , file1) ;
 let processeur = new Processeur() ;
 let dispatcher = new Dispatcher() ;
 let tab = [pcb1 , pcb2] ;
 dispatcher.setPCB_processus(tab) ;
 let fileBloquee = new File() ;
-let processus = [process1 , process3 , process2 ] ;
+let processus = [process1 , process3 , process2] ;
 
 let scheduler = new Scheduler(processeur , dispatcher , files , fileBloquee , processus) ;
 scheduler.Ordonnanceur_FMAR() ;
