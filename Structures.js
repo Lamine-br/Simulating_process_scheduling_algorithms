@@ -319,6 +319,9 @@ class File {
        processus.setTempsRestant(b.getTempsRestant()) ;
        processus.setPriorite(b.getPriorite()) ;
        processus.setInterruptions(b.getInterruptions()) ;
+       processus.setTempsSejour(b.getTempsSejour()) ;
+       processus.setTempsAttente(b.getTempsAttente()) ;
+       processus.setTempsReponse(b.getTempsReponse()) ;
        this.#Queue -= 1;
        if ( this.FileVide()){
            this.#Tete -= 1;
@@ -639,9 +642,11 @@ class Scheduler {
                 num_file = this.#files.Ordonnanceur_FMAR() ;
                 if(num_file !== -1){
                     this.ActiverProcessus(num_file) ;
+                    this.#dispatcher.IncrementerNb() ;
                     console.log('t = '+t+' : '+'Activation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
                     if(this.#processeur.getProcessus().getTempsExecution() === this.#processeur.getProcessus().getTempsRestant()){
                         this.#processeur.getProcessus().setTempsReponse(this.#processeur.getProcessus().getTempsAttente()) ;
+                        console.log("Temps de reponse = "+ this.#processeur.getProcessus().getTempsReponse()) ;
                     }
                     quantum = this.#files.getFile(num_file).getQuantum() ;
                     this.#dispatcher.setSignal(false) ;
@@ -652,21 +657,25 @@ class Scheduler {
                 if(this.#processeur.ProcesseurActif()){
                     if(this.#processeur.getProcessus().getTempsRestant() === 0){
                         console.log('t = '+t+' : '+'Destruction du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                        console.log("Temps de sejour : "+this.#processeur.getProcessus().getTempsSejour()) ;
+                        console.log("Temps de Attente : "+this.#processeur.getProcessus().getTempsAttente()) ;
                         this.DetruireProcessus() ;
                         j++ ;
                         this.#dispatcher.setSignal(true) ;
+                        //this.#dispatcher.IncrementerNb() ;
                         cpt = 0 ;
                         arret = true ;
                     }else{
                         if(cpt === quantum){
                         if(num_file < this.#files.getFiles().length - 1){
-                        console.log('t = '+t+' : '+'Désactivation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
-                        this.DesactiverProcessus(num_file + 1) ;
+                            console.log('t = '+t+' : '+'Désactivation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                            this.DesactiverProcessus(num_file + 1) ;
                         }else{
                             console.log('t = '+t+' : '+'Désactivation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
                             this.DesactiverProcessus(num_file) ;
                         }
                         this.#dispatcher.setSignal(true) ;
+                        //this.#dispatcher.IncrementerNb() ;
                         cpt = 0 ;
                         arret = true ;
                         }else{
@@ -677,6 +686,7 @@ class Scheduler {
                                     this.BloquerProcessus() ;
                                     cpt = 0 ;
                                     this.#dispatcher.setSignal(true) ;
+                                    //this.#dispatcher.IncrementerNb() ;
                                     arret = true ;
                                 }
                              }
@@ -693,14 +703,20 @@ class Scheduler {
                         arret = true ;
                     }
                 }
-                for (let j = 0 ;j<this.#fileBloquee.getFile().length ; j++){
-                    this.#fileBloquee.getFile()[j].getInterruptions()[0].setTempsBlocage(this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() - 1) ;
-                    this.#fileBloquee.getFile()[j].setTempsSejour(this.#fileBloquee.getFile()[j].getTempsSejour() + 1) ;
-                }
-                for(let j = 0 ; j<this.#files.getFiles().length ; j++){
-                    for(let k = 0 ; k<this.#files.getFile(j).length ; k++){
-                        this.#files.getFile(j)[k].setTempsAttente(this.#files.getFile(j)[k].getTempsAttente()+1) ;
-                        this.#files.getFile(j)[k].setTempsSejour(this.#files.getFile(j)[k].getTempsSejour()+1) ;
+                if(!arret){
+                    for (let j = 0 ;j<this.#fileBloquee.getFile().length ; j++){
+                        this.#fileBloquee.getFile()[j].getInterruptions()[0].setTempsBlocage(this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() - 1) ;
+                        this.#fileBloquee.getFile()[j].setTempsSejour(this.#fileBloquee.getFile()[j].getTempsSejour() + 1) ;
+                    }
+                    for(let j = 0 ; j<this.#files.getFiles().length ; j++){
+                        for(let k = 0 ; k<this.#files.getFile(j).getFile().length ; k++){
+                            this.#files.getFile(j).getFile()[k].setTempsAttente(this.#files.getFile(j).getFile()[k].getTempsAttente()+1) ;
+                            this.#files.getFile(j).getFile()[k].setTempsSejour(this.#files.getFile(j).getFile()[k].getTempsSejour()+1) ;
+                            console.log("Processus"+this.#files.getFile(j).getFile()[k].getPCB().getPID()+" --> "+"Temps d'attente : "+this.#files.getFile(j).getFile()[k].getTempsAttente()+ "  ,  Temps de sejour : "+this.#files.getFile(j).getFile()[k].getTempsSejour()) ;
+                        }
+                    }
+                    if(this.#processeur.ProcesseurActif()){
+                        this.#processeur.getProcessus().setTempsSejour(this.#processeur.getProcessus().getTempsSejour() + 1) ;
                     }
                 }
             }
@@ -715,6 +731,7 @@ class Scheduler {
                 arret = false ;
             }
         }
+        console.log(this.#dispatcher.getNbChangementContexte()) ;
         console.log("\n--------Fin de l'éxecution---------") ;
     }
 }
@@ -735,8 +752,6 @@ let It2 = [it2,it3] ;
 let process1 = new Processus(pcb1 , 0 , 20 , 20 , 1 , It1) ;
 let process2 = new Processus(pcb2 , 2 , 30 , 30 , 2 , It2) ;
 let process3 = new Processus(pcb3 , 0 , 10 , 10 , 1 , []) ;
-let process4 = new Processus(pcb4 , 2 , 30 , 15 , 2 , []) ;
-let process5 = new Processus(pcb5 , 2 , 25 , 15 , 3 , []) ;
 let files = new File_Multiniveaux(2) ;
 let file = new File_Attente(0 , 5) ;
 let file1 = new File_Attente(0 , 10) ;
@@ -747,7 +762,7 @@ let dispatcher = new Dispatcher() ;
 let tab = [pcb1 , pcb2] ;
 dispatcher.setPCB_processus(tab) ;
 let fileBloquee = new File() ;
-let processus = [process1 , process3 , process2] ;
+let processus = [process1 , process2] ;
 
 let scheduler = new Scheduler(processeur , dispatcher , files , fileBloquee , processus) ;
 scheduler.Ordonnanceur_FMAR() ;
