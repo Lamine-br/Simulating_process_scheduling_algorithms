@@ -456,15 +456,16 @@ class File {
    /*Ordonnanceur_Prio()*/
    Ordonnanceur_PRIOS()
    {
-    let i = 0;
-    for( i=0 ; i < this.#files.length ; i++){
-        if(this.#files[i].FileVide()){
-            continue ;
-        }else{
-            return i ;
+        let pos = 0 , min = 0 ;
+        min = this.#files[0].getFile()[i].getPriorite() ;
+        pos = 0 ;
+        for(let i=0 ; i<this.#files[0].getFile().length ; i++){
+            if(this.#files[0].getFile()[i].getPriorite() > min){
+                pos = i ;
+            }
         }
-    }
-    return -1 ;
+        this.#files[0].Permut(0 , i) ;
+        return 0 ;
    }
    /*Ordonnanceur_FMSR() */
    }
