@@ -456,7 +456,7 @@ class File {
    /*Ordonnanceur_Prio()*/
    Ordonnanceur_PRIOS()
    {
-        let pos = 0 , min = 0 ;
+        let pos = 0 , min = 0 , i = 0 ;
         min = this.#files[0].getFile()[i].getPriorite() ;
         pos = 0 ;
         for(let i=0 ; i<this.#files[0].getFile().length ; i++){
