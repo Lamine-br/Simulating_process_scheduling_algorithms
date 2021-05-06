@@ -456,16 +456,20 @@ class File {
    /*Ordonnanceur_Prio()*/
    Ordonnanceur_PRIOS()
    {
-        let pos = 0 , min = 0 , i = 0 ;
-        min = this.#files[0].getFile()[i].getPriorite() ;
-        pos = 0 ;
-        for(let i=0 ; i<this.#files[0].getFile().length ; i++){
-            if(this.#files[0].getFile()[i].getPriorite() > min){
-                pos = i ;
+        let pos = 0 , min = 0 ;
+        if(this.#files[0].getFile().length > 0){
+            min = this.#files[0].getFile()[0].getPriorite() ;
+            pos = 0 ;
+            for(let i=0 ; i<this.#files[0].getFile().length ; i++){
+                if(this.#files[0].getFile()[i].getPriorite() < min){
+                    pos = i ;
+                }
             }
+            this.#files[0].Permut(0 , pos) ;
+            return 0 ;
+        }else{
+            return -1 ;
         }
-        this.#files[0].Permut(0 , i) ;
-        return 0 ;
    }
    /*Ordonnanceur_FMSR() */
    }
@@ -999,7 +1003,7 @@ class Scheduler {
             if (this.#dispatcher.getSignal() === true){
                 num_file = this.#files.Ordonnanceur_PRIOS() ;
                 if(num_file !== -1){
-                    this.ActiverProcessus(0) ;
+                    this.ActiverProcessus(num_file) ;
                     this.#dispatcher.IncrementerNb() ;
                     console.log('t = '+t+' : '+'Activation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
                     if(this.#processeur.getProcessus().getTempsExecution() === this.#processeur.getProcessus().getTempsRestant()){
@@ -1209,7 +1213,7 @@ let it3 = new Interruption("Lecture Mémoire" , 2 , 19) ;
 let It2 = [it2,it3] ;
 let process1 = new Processus(pcb1 , 0 , 20 , 2 , It1) ;
 let process2 = new Processus(pcb2 , 2 , 30 , 3 , It2) ;
-let process3 = new Processus(pcb3 , 3 , 10 , 4 , []) ;
+let process3 = new Processus(pcb3 , 3 , 10 , 0 , []) ;
 let files = new File_Multiniveaux(3) ;
 let processeur = new Processeur() ;
 let dispatcher = new Dispatcher() ;
