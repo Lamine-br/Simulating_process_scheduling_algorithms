@@ -76,12 +76,12 @@ class Processus {
     #TempsReponse ;
 
     /* Constructeur */
-    constructor(pcb,T1,T2,T3,prio,It)
+    constructor(pcb,T1,T2,prio,It)
     {
         this.#PCB = pcb ;
         this.#TempsArrive = T1 ;
         this.#TempsExecution = T2 ;
-        this.#TempsRestant = T3 ;
+        this.#TempsRestant = T2 ;
         this.#Priorite = prio ;
         this.#Interruptions = [] ;
         this.#Interruptions = It ;
@@ -1206,20 +1206,16 @@ let It1 = [it1] ;
 let it2 = new Interruption("Lecture Mémoire" , 4 , 2) ;
 let it3 = new Interruption("Lecture Mémoire" , 2 , 19) ;
 let It2 = [it2,it3] ;
-let process1 = new Processus(pcb1 , 0 , 20 , 20 , 1 , It1) ;
-let process2 = new Processus(pcb2 , 2 , 30 , 30 , 2 , It2) ;
-let process3 = new Processus(pcb3 , 0 , 10 , 10 , 1 , []) ;
-let files = new File_Multiniveaux(2) ;
-let file = new File_Attente(0 , 5) ;
-let file1 = new File_Attente(0 , 10) ;
-files.setFile(0 , file) ;
-files.setFile(1 , file1) ;
+let process1 = new Processus(pcb1 , 0 , 20 , 20 , 2 , It1) ;
+let process2 = new Processus(pcb2 , 2 , 30 , 30 , 0 , It2) ;
+let process3 = new Processus(pcb3 , 0 , 10 , 10 , 2 , []) ;
+let files = new File_Multiniveaux(3) ;
 let processeur = new Processeur() ;
 let dispatcher = new Dispatcher() ;
 let tab = [pcb1 , pcb2] ;
 dispatcher.setPCB_processus(tab) ;
 let fileBloquee = new File() ;
-let processus = [process1 , process2] ;
+let processus = [process1 , process3 , process2] ;
 
 let scheduler = new Scheduler(processeur , dispatcher , files , fileBloquee , processus) ;
-scheduler.Ordonnanceur_FMAR() ;
+scheduler.Ordonnanceur_PRIOS() ;
