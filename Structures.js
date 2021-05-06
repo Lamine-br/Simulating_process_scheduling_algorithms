@@ -338,6 +338,24 @@ class File {
    }
    
    /*Ordonnanceur_FIFO() */
+ ordonnanceur_FIFO()
+{
+    if(this.#file.length > 1 ) /// si la file n'est pas vide et il y a plus d'un processus dedans
+    {
+     for (var i = 0; i < this.#file.length-2; i++) 
+     {
+         for(var j=i+1;j<this.#file.length-1;j++)
+         {
+             if(this.#file[i].getTempsArrivee() > this.#file[j].getTempsArrivee())
+             {
+                 this.Permut(i,j);
+             }
+         }
+     }
+  } 
+ }
+}
+/-----------------------------------------------------------------------------------------------------/
    /*Ordonnanceur_SJF() */
     ordonnanceur_sjf()
 {
@@ -943,6 +961,7 @@ class Scheduler {
         console.log(this.#dispatcher.getNbChangementContexte()) ;
         console.log("\n--------Fin de l'éxecution---------") ;
     }
+}
            
                 
     /*****************Ordonnanceur Files Multiniveaux Avec Recyclage*****************/
