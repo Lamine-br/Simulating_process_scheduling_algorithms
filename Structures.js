@@ -943,7 +943,6 @@ class Scheduler {
         console.log(this.#dispatcher.getNbChangementContexte()) ;
         console.log("\n--------Fin de l'éxecution---------") ;
     }
-}
            
                 
     /*****************Ordonnanceur Files Multiniveaux Avec Recyclage*****************/
