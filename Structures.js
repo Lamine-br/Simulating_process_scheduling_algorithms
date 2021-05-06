@@ -985,7 +985,7 @@ class Scheduler {
              while(h < this.#processus.length){
                 if(this.#processus[h].getTempsArrive() === t){
                     console.log('t = '+t+' : '+'Création du processus'+this.#processus[h].getPCB().getPID()) ;
-                    this.CreerProcessus(h , this.#processus[h].getPriorite()) ;
+                    this.CreerProcessus(h , 0) ;
                 }else{
                     if(this.#processus[h].getTempsArrive() > t){
                         break ;
@@ -998,7 +998,7 @@ class Scheduler {
             if (this.#dispatcher.getSignal() === true){
                 num_file = this.#files.Ordonnanceur_PRIOS() ;
                 if(num_file !== -1){
-                    this.ActiverProcessus(num_file) ;
+                    this.ActiverProcessus(0) ;
                     this.#dispatcher.IncrementerNb() ;
                     console.log('t = '+t+' : '+'Activation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
                     if(this.#processeur.getProcessus().getTempsExecution() === this.#processeur.getProcessus().getTempsRestant()){
@@ -1040,7 +1040,7 @@ class Scheduler {
                     if (this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() === 0){
                         console.log('t = '+(t)+' : '+'Réveil du processus'+this.#fileBloquee.getFile()[j].getPCB().getPID()) ;
                         this.#fileBloquee.getFile()[j].DetruireInterruption(0) ;
-                        this.ReveillerProcessus(j , this.#fileBloquee.getFile()[j].getPriorite()) ;
+                        this.ReveillerProcessus(j , 0) ;
                         arret = true ;
                     }
                 }
@@ -1206,16 +1206,16 @@ let It1 = [it1] ;
 let it2 = new Interruption("Lecture Mémoire" , 4 , 2) ;
 let it3 = new Interruption("Lecture Mémoire" , 2 , 19) ;
 let It2 = [it2,it3] ;
-let process1 = new Processus(pcb1 , 0 , 20 , 20 , 2 , It1) ;
-let process2 = new Processus(pcb2 , 2 , 30 , 30 , 0 , It2) ;
-let process3 = new Processus(pcb3 , 0 , 10 , 10 , 2 , []) ;
+let process1 = new Processus(pcb1 , 0 , 20 , 2 , It1) ;
+let process2 = new Processus(pcb2 , 2 , 30 , 3 , It2) ;
+let process3 = new Processus(pcb3 , 3 , 10 , 4 , []) ;
 let files = new File_Multiniveaux(3) ;
 let processeur = new Processeur() ;
 let dispatcher = new Dispatcher() ;
 let tab = [pcb1 , pcb2] ;
 dispatcher.setPCB_processus(tab) ;
 let fileBloquee = new File() ;
-let processus = [process1 , process3 , process2] ;
+let processus = [process1 , process2 , process3] ;
 
 let scheduler = new Scheduler(processeur , dispatcher , files , fileBloquee , processus) ;
 scheduler.Ordonnanceur_PRIOS() ;
