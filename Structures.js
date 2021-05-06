@@ -619,6 +619,113 @@ class Scheduler {
         this.#dispatcher.setSignal(true) ;
     }
 
+         /*************************Ordonnanceur Round Robin*************************/
+    Ordonnanceur_RR(){
+        let i = this.#processus.length , j = 0 , t = 0 , h = 0 , quantum = 0 , arret = false , cpt = 0 , num_file = 0 ;
+        while(j !== i){
+            // Vérifier les Temps d'arrivée des processus 
+             while(h < this.#processus.length){
+                if(this.#processus[h].getTempsArrive() === t){
+                    console.log('t = '+t+' : '+'Création du processus'+this.#processus[h].getPCB().getPID()) ;
+                    this.CreerProcessus(h , 0) ;
+
+                }else{
+                    if(this.#processus[h].getTempsArrive() > t){
+                        break ;
+                    }
+                    h++ ;
+                }
+            }
+            h = 0 ;
+            // Si le processeur n'est pas actif
+            if (this.#dispatcher.getSignal() === true){
+                if(num_file !== -1){
+                    this.ActiverProcessus(0) ;
+                    this.#dispatcher.setNbChangementContexte(this.#dispatcher.getNbChangementContexte()+1) ;
+                    console.log('t = '+t+' : '+'Activation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                    if(this.#processeur.getProcessus().getTempsExecution() === this.#processeur.getProcessus().getTempsRestant()){
+                        this.#processeur.getProcessus().setTempsReponse(this.#processeur.getProcessus().getTempsAttente()) ;
+                        console.log("Temps de reponse = "+ this.#processeur.getProcessus().getTempsReponse()) ;
+                    }
+                    quantum = this.#files.getFile(0).getQuantum() ;
+                    this.#dispatcher.setSignal(false) ;
+                }else{
+                    console.log('t = '+t+' : '+'Aucun processus à activer !') ;
+                }
+            }else{ //Si le processeur est actif
+                if(this.#processeur.ProcesseurActif()){
+                    if(this.#processeur.getProcessus().getTempsRestant() === 0){
+                        console.log('t = '+t+' : '+'Destruction du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                        this.#processeur.getProcessus().afficher() ;
+                        this.DetruireProcessus() ;
+                        j++ ;
+                        this.#dispatcher.setSignal(true) ;
+                        cpt = 0 ;
+                        arret = true ;
+                    }else{
+                        if(cpt === quantum){
+                        console.log('t = '+t+' : '+'Désactivation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                        this.DesactiverProcessus(0) ;                       
+                        this.#dispatcher.setSignal(true) ;
+                        cpt = 0 ;
+                        arret = true ;
+                        }else{
+                            if(this.#processeur.getProcessus().getInterruptions().length > 0){
+                                if(this.#processeur.getProcessus().getInterruptions()[0].getTempsDeclenchement() === this.#processeur.getProcessus().getTempsExecution() - this.#processeur.getProcessus().getTempsRestant()){
+                                    console.log('t = '+t+' : '+'Bloquage du processus'+this.#processeur.getProcessus().getPCB().getPID()+': Interruption') ;
+                                    this.BloquerProcessus() ;
+                                    cpt = 0 ;
+                                    this.#dispatcher.setSignal(true) ;
+                                    arret = true ;
+                                }
+                             }
+                        }
+                    }
+                }
+            }
+            if (!arret){
+                for (let j = 0 ; j<this.#fileBloquee.getFile().length ; j++){
+                    if (this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() === 0){
+                        console.log('t = '+(t)+' : '+'Réveil du processus'+this.#fileBloquee.getFile()[j].getPCB().getPID()) ;
+                        this.#fileBloquee.getFile()[j].DetruireInterruption(0) ;
+                        this.ReveillerProcessus(j , 0) ;
+                        arret = true ;
+                    }
+                }
+                if(!arret){
+                    for (let j = 0 ;j<this.#fileBloquee.getFile().length ; j++){
+                        this.#fileBloquee.getFile()[j].getInterruptions()[0].setTempsBlocage(this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() - 1) ;
+                        this.#fileBloquee.getFile()[j].setTempsSejour(this.#fileBloquee.getFile()[j].getTempsSejour() + 1) ;
+                    }
+                    for(let j = 0 ; j<this.#files.getFiles().length ; j++){
+                        for(let k = 0 ; k<this.#files.getFile(j).getFile().length ; k++){
+                            this.#files.getFile(j).getFile()[k].setTempsAttente(this.#files.getFile(j).getFile()[k].getTempsAttente()+1) ;
+                            this.#files.getFile(j).getFile()[k].setTempsSejour(this.#files.getFile(j).getFile()[k].getTempsSejour()+1) ;
+                            console.log("Processus"+this.#files.getFile(j).getFile()[k].getPCB().getPID()+" --> "+"Temps d'attente : "+this.#files.getFile(j).getFile()[k].getTempsAttente()+ "  ,  Temps de sejour : "+this.#files.getFile(j).getFile()[k].getTempsSejour()) ;
+                        }
+                    }
+                    if(this.#processeur.ProcesseurActif()){
+                        this.#processeur.getProcessus().setTempsSejour(this.#processeur.getProcessus().getTempsSejour() + 1) ;
+                    }
+                }
+            }
+            if(!arret){
+                if(this.#processeur.ProcesseurActif()){
+                    this.#processeur.getProcessus().setTempsRestant(this.#processeur.getProcessus().getTempsRestant() - 1) ;
+                    cpt++ ;
+                    this.#processeur.setTempsUtilisation(this.#processeur.getTempsUtilisation()+1) ;
+                }
+                t++ ;
+            }else{
+                arret = false ;
+            }
+        }
+        console.log(this.#dispatcher.getNbChangementContexte()) ;
+        console.log("\n--------Fin de l'éxecution---------") ;
+    }
+}
+           
+                
     /*****************Ordonnanceur Files Multiniveaux Avec Recyclage*****************/
     Ordonnanceur_FMAR(){
         let i = this.#processus.length , j = 0 , t = 0 , h = 0 , quantum = 0 , arret = false , cpt = 0 , num_file = 0 ;
