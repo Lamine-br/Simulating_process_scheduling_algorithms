@@ -353,9 +353,8 @@ class File {
          }
      }
   } 
- }
 }
-/-----------------------------------------------------------------------------------------------------/
+/*-----------------------------------------------------------------------------------------------------*/
    /*Ordonnanceur_SJF() */
     ordonnanceur_sjf()
 {
@@ -975,7 +974,6 @@ class Scheduler {
         console.log(this.#dispatcher.getNbChangementContexte()) ;
         console.log("\n--------Fin de l'éxecution---------") ;
     }
-}
            
 
 /*****************Ordonnanceur Par Priorite Statique*****************/ 
