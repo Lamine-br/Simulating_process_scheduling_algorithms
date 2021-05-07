@@ -670,7 +670,8 @@ class Scheduler {
         this.#processeur.setProcessus(undefined) ;
         this.#dispatcher.setSignal(true) ;
     }
-                /***********************************Ordonnanceur FIFO***************************************************/
+
+/***********************************Ordonnanceur FIFO***************************************************/
          Ordonnanceur_FIFO(){
         let i = this.#processus.length , j = 0 , t = 0 , h = 0 ,  arret = false , cpt = 0 , num_file = 0 ;
         while(j !== i){
@@ -768,7 +769,7 @@ class Scheduler {
                 arret = false ;
             }
         }
-        console.log(this.#dispatcher.getNbChangementContexte()) ;
+        console.log('Nombre de changements de contexte : '+this.#dispatcher.getNbChangementContexte()) ;
         console.log("\n--------Fin de l'éxecution---------") ;
     }
     
@@ -870,7 +871,7 @@ class Scheduler {
                 arret = false ;
             }
         }
-        console.log(this.#dispatcher.getNbChangementContexte()) ;
+        console.log('Nombre de changements de contexte : '+this.#dispatcher.getNbChangementContexte()) ;
         console.log("\n--------Fin de l'éxecution---------") ;
     }
     
@@ -976,13 +977,13 @@ class Scheduler {
                 arret = false ;
             }
         }
-        console.log(this.#dispatcher.getNbChangementContexte()) ;
+        console.log('Nombre de changements de contexte : '+this.#dispatcher.getNbChangementContexte()) ;
         console.log("\n--------Fin de l'éxecution---------") ;
     }
            
 
 /*****************Ordonnanceur Par Priorite Statique*****************/ 
-    Ordonnanceur_PRIOS()
+    Ordonnanceur_PRIOS_NonPreemptif()
     {
         let i = this.#processus.length , j = 0 , t = 0 , h = 0 , quantum = 0 , arret = false , cpt = 0 , num_file = 0 ;
         while(j !== i){
@@ -1077,10 +1078,129 @@ class Scheduler {
                 arret = false ;
             }
         }
-        console.log(this.#dispatcher.getNbChangementContexte()) ;
+        console.log('Nombre de changements de contexte : '+this.#dispatcher.getNbChangementContexte()) ;
         console.log("\n--------Fin de l'éxecution---------") ;
     }
                 
+    
+/*****************Ordonnanceur Par Priorite Statique*****************/ 
+Ordonnanceur_PRIOS_Preemptif()
+{
+    let i = this.#processus.length , j = 0 , t = 0 , h = 0 , quantum = 0 , arret = false , cpt = 0 , num_file = 0 ;
+    while(j !== i){
+        // Vérifier les Temps d'arrivée des processus 
+         while(h < this.#processus.length){
+            if(this.#processus[h].getTempsArrive() === t){
+                console.log('t = '+t+' : '+'Création du processus'+this.#processus[h].getPCB().getPID()) ;
+                if(this.#processeur.ProcesseurActif()){
+                    if(this.#processus[h].getPriorite() < this.#processeur.getProcessus().getPriorite()){
+                        console.log('t = '+t+' : '+'Désactivation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                        this.DesactiverProcessus(0) ;
+                        this.#dispatcher.setSignal(true) ;
+                        cpt = 0 ;
+                        arret = true ;
+                    }
+                }
+                this.CreerProcessus(h , 0) ;
+            }else{
+                if(this.#processus[h].getTempsArrive() > t){
+                    break ;
+                }
+                h++ ;
+            }
+        }
+        h = 0 ;
+        // Si le processeur n'est pas actif
+        if (this.#dispatcher.getSignal() === true){
+            num_file = this.#files.Ordonnanceur_PRIOS() ;
+            if(num_file !== -1){
+                this.ActiverProcessus(num_file) ;
+                this.#dispatcher.IncrementerNb() ;
+                console.log('t = '+t+' : '+'Activation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                if(this.#processeur.getProcessus().getTempsExecution() === this.#processeur.getProcessus().getTempsRestant()){
+                    this.#processeur.getProcessus().setTempsReponse(this.#processeur.getProcessus().getTempsAttente()) ;
+                    console.log("Temps de reponse = "+ this.#processeur.getProcessus().getTempsReponse()) ;
+                }
+                this.#dispatcher.setSignal(false) ;
+            }else{
+                console.log('t = '+t+' : '+'Aucun processus à activer !') ;
+            }
+        }else{ //Si le processeur est actif
+            if(this.#processeur.ProcesseurActif()){
+                if(this.#processeur.getProcessus().getTempsRestant() === 0){
+                    console.log('t = '+t+' : '+'Destruction du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                    console.log("Temps de sejour : "+this.#processeur.getProcessus().getTempsSejour()) ;
+                    console.log("Temps de Attente : "+this.#processeur.getProcessus().getTempsAttente()) ;
+                    this.DetruireProcessus() ;
+                    j++ ;
+                    this.#dispatcher.setSignal(true) ;
+                    cpt = 0 ;
+                    arret = true ;
+                }else{
+                    if(this.#processeur.getProcessus().getInterruptions().length !== 0){
+                        if(this.#processeur.getProcessus().getInterruptions().length > 0){
+                            if(this.#processeur.getProcessus().getInterruptions()[0].getTempsDeclenchement() === this.#processeur.getProcessus().getTempsExecution() - this.#processeur.getProcessus().getTempsRestant()){
+                                console.log('t = '+t+' : '+'Bloquage du processus'+this.#processeur.getProcessus().getPCB().getPID()+': Interruption') ;
+                                this.BloquerProcessus() ;
+                                cpt = 0 ;
+                                this.#dispatcher.setSignal(true) ;
+                                arret = true ;
+                            }
+                         }
+                    }
+                }
+            }
+        }
+        if (!arret){
+            for (let j = 0 ; j<this.#fileBloquee.getFile().length ; j++){
+                if (this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() === 0){
+                    console.log('t = '+(t)+' : '+'Réveil du processus'+this.#fileBloquee.getFile()[j].getPCB().getPID()) ;
+                    this.#fileBloquee.getFile()[j].DetruireInterruption(0) ;
+                    if(this.#processeur.ProcesseurActif()){
+                        if(this.#fileBloquee.getFile()[j].getPriorite() < this.#processeur.getProcessus().getPriorite()){
+                            console.log('t = '+t+' : '+'Désactivation du processus'+this.#processeur.getProcessus().getPCB().getPID()) ;
+                            this.DesactiverProcessus(0) ;
+                            this.#dispatcher.setSignal(true) ;
+                            cpt = 0 ;
+                            arret = true ;
+                        }
+                    }
+                    this.ReveillerProcessus(j , 0) ;
+                    arret = true ;
+                }
+            }
+            if(!arret){
+                for (let j = 0 ;j<this.#fileBloquee.getFile().length ; j++){
+                    this.#fileBloquee.getFile()[j].getInterruptions()[0].setTempsBlocage(this.#fileBloquee.getFile()[j].getInterruptions()[0].getTempsBlocage() - 1) ;
+                    this.#fileBloquee.getFile()[j].setTempsSejour(this.#fileBloquee.getFile()[j].getTempsSejour() + 1) ;
+                }
+                for(let j = 0 ; j<this.#files.getFiles().length ; j++){
+                    for(let k = 0 ; k<this.#files.getFile(j).getFile().length ; k++){
+                        this.#files.getFile(j).getFile()[k].setTempsAttente(this.#files.getFile(j).getFile()[k].getTempsAttente()+1) ;
+                        this.#files.getFile(j).getFile()[k].setTempsSejour(this.#files.getFile(j).getFile()[k].getTempsSejour()+1) ;
+                        console.log("Processus"+this.#files.getFile(j).getFile()[k].getPCB().getPID()+" --> "+"Temps d'attente : "+this.#files.getFile(j).getFile()[k].getTempsAttente()+ "  ,  Temps de sejour : "+this.#files.getFile(j).getFile()[k].getTempsSejour()) ;
+                    }
+                }
+                if(this.#processeur.ProcesseurActif()){
+                    this.#processeur.getProcessus().setTempsSejour(this.#processeur.getProcessus().getTempsSejour() + 1) ;
+                }
+            }
+        }
+        if(!arret){
+            if(this.#processeur.ProcesseurActif()){
+                this.#processeur.getProcessus().setTempsRestant(this.#processeur.getProcessus().getTempsRestant() - 1) ;
+                cpt++ ;
+                this.#processeur.setTempsUtilisation(this.#processeur.getTempsUtilisation()+1) ;
+            }
+            t++ ;
+        }else{
+            arret = false ;
+        }
+    }
+    console.log('Nombre de changements de contexte : '+this.#dispatcher.getNbChangementContexte()) ;
+    console.log("\n--------Fin de l'éxecution---------") ;
+}
+
     /*****************Ordonnanceur Files Multiniveaux Avec Recyclage*****************/
     Ordonnanceur_FMAR(){
         let i = this.#processus.length , j = 0 , t = 0 , h = 0 , quantum = 0 , arret = false , cpt = 0 , num_file = 0 ;
@@ -1124,7 +1244,6 @@ class Scheduler {
                         this.DetruireProcessus() ;
                         j++ ;
                         this.#dispatcher.setSignal(true) ;
-                        //this.#dispatcher.IncrementerNb() ;
                         cpt = 0 ;
                         arret = true ;
                     }else{
@@ -1137,7 +1256,6 @@ class Scheduler {
                             this.DesactiverProcessus(num_file) ;
                         }
                         this.#dispatcher.setSignal(true) ;
-                        //this.#dispatcher.IncrementerNb() ;
                         cpt = 0 ;
                         arret = true ;
                         }else{
@@ -1148,7 +1266,6 @@ class Scheduler {
                                     this.BloquerProcessus() ;
                                     cpt = 0 ;
                                     this.#dispatcher.setSignal(true) ;
-                                    //this.#dispatcher.IncrementerNb() ;
                                     arret = true ;
                                 }
                              }
@@ -1193,7 +1310,7 @@ class Scheduler {
                 arret = false ;
             }
         }
-        console.log(this.#dispatcher.getNbChangementContexte()) ;
+        console.log('Nombre de changements de contexte : '+this.#dispatcher.getNbChangementContexte()) ;
         console.log("\n--------Fin de l'éxecution---------") ;
     }
 }
@@ -1212,8 +1329,8 @@ let it2 = new Interruption("Lecture Mémoire" , 4 , 2) ;
 let it3 = new Interruption("Lecture Mémoire" , 2 , 19) ;
 let It2 = [it2,it3] ;
 let process1 = new Processus(pcb1 , 0 , 20 , 2 , It1) ;
-let process2 = new Processus(pcb2 , 2 , 30 , 3 , It2) ;
-let process3 = new Processus(pcb3 , 3 , 10 , 0 , []) ;
+let process2 = new Processus(pcb2 , 0 , 30 , 3 , It2) ;
+let process3 = new Processus(pcb3 , 10 , 10 , 0 , []) ;
 let files = new File_Multiniveaux(3) ;
 let processeur = new Processeur() ;
 let dispatcher = new Dispatcher() ;
@@ -1223,4 +1340,4 @@ let fileBloquee = new File() ;
 let processus = [process1 , process2 , process3] ;
 
 let scheduler = new Scheduler(processeur , dispatcher , files , fileBloquee , processus) ;
-scheduler.Ordonnanceur_PRIOS() ;
+scheduler.Ordonnanceur_PRIOS_Preemptif() ;
