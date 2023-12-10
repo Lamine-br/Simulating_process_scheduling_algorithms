@@ -1,0 +1,93 @@
+html {
+    font-size: 10px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1 {
+    font-size: 60px;
+    text-align: center;
+}
+
+p {
+    text-indent: 10px;
+    text-align: justify;
+    letter-spacing: 1px;
+    font-size: 200%;
+}
+
+li {
+    font-size: 16px;
+    line-height: 3;
+    letter-spacing: 1px;
+}
+
+.global {
+    width: 60%;
+    margin: 0 auto;
+    background-color: #83c4d4;
+    padding: 0 20px 20px 20px;
+    border: 5px solid #04235c;
+}
+
+body {
+    background-image: url("image6.jpg");
+    background-repeat: repeat;
+}
+
+h1 {
+    margin: 0;
+    padding: 20px 0;
+    color: #0b253d;
+    text-shadow: 3px 3px 1px rgb(243, 243, 242);
+}
+
+h2 {
+    margin: 0;
+    padding: 20px 0;
+    color: #0b253d;
+    text-shadow: 3px 3px 1px rgb(245, 243, 243);
+    text-decoration: blink;
+    font-family: "Arial";
+    font-size: 250%;
+    font-weight: 1000;
+}
+
+.souligne {
+    text-decoration: underline;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+}
+
+.menu {
+    padding-left: 0;
+}
+
+.menu li {
+    list-style: none;
+    width: 100%;
+    background-color: #04235c;
+    text-align: center;
+}
+
+.menu li a {
+    display: block;
+    text-decoration: dashed;
+    color: white;
+    font-weight: bold;
+    line-height: 45px;
+}
+
+.menu li:hover {
+    background: white;
+}
+
+.menu li:hover a {
+    color: #6abbcf;
+}
+
+ul li {
+    list-style: none;
+}

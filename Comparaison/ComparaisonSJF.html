@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script src="https://www.google.com/jsapi"></script>
+    <title>Comparaison</title>
+    <link rel="stylesheet" type="text/css" href="Comparaison.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Bungee|Bungee+Shade|Covered+By+Your+Grace"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:800"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Sidebar  -->
+      <nav id="sidebar">
+        <div class="sidebar-header">
+          <h3>Comparaison</h3>
+        </div>
+
+        <ul class="list-unstyled components">
+          <p>Algorithmes</p>
+          <li>
+            <a href="../Comparaison/ComparaisonFIFO.html">PAPS</a>
+          </li>
+          <li class="active">
+            <a href="../Comparaison/ComparaisonSJF.html">
+              SJF Sans requisition</a
+            >
+          </li>
+          <li>
+            <a href="../Comparaison/ComparaisonSJFP.html">
+              SJF Avec requisition</a
+            >
+          </li>
+          <li>
+            <a href="../Comparaison/ComparaisonRR.html">Tourniquet</a>
+          </li>
+          <li>
+            <a href="../Comparaison/ComparaisonPNP.html">
+              Prio Sans requisition</a
+            >
+          </li>
+          <li>
+            <a href="../Comparaison/ComparaisonPP.html">
+              Prio Avec requisition</a
+            >
+          </li>
+          <li>
+            <a href="../Comparaison/ComparaisonFMSRNP.html">
+              FMSR Sans requisition</a
+            >
+          </li>
+          <li>
+            <a href="../Comparaison/ComparaisonFMSRP.html">
+              FMSR Avec requisition</a
+            >
+          </li>
+          <li>
+            <a href="../Comparaison/ComparaisonFMAR.html">FMAR</a>
+          </li>
+        </ul>
+        <ul class="list-unstyled CTAs">
+          <li>
+            <a href="../Histogramme/bar.html" class="download">Histogramme</a>
+          </li>
+          <li>
+            <a href="#" class="article">Tableau des critéres</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Page Content  -->
+      <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <div class="container-fluid">
+            <button
+              class="btn btn-dark d-inline-block d-lg-none ml-auto"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <i class="fas fa-align-justify"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item active">
+                  <a class="nav-link" href="../Accueil.html">Acceuil</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../guide_utilisation .pdf" target="_blank">Guide d'utilisation</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../aide/aide3.html" target="_blank">Aide</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="text1">
+          <h2>
+            Algorithme : Le plus court d'abord sans requisition
+          </h2>
+          <br>
+          <div class="line"></div>
+          <h3>Tableau des critéres</h3>
+          <br>
+      </div>
+      <div class="line"></div>
+        <h3>Diagramme du Gantt</h3>
+        <br>
+        <div id="SJF" class="chart"></div>
+        <script src="ComparaisonSJF.js"></script>
+    </div>
+
+    <div id="down"></div>
+  </body>
+</html>

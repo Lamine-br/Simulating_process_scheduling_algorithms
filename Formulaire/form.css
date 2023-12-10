@@ -1,0 +1,90 @@
+body{
+    background: linear-gradient(170deg, rgba(49, 57, 73, 0.8) 20%, rgba(49, 57, 73, 0.5) 20%, rgba(49, 57, 73, 0.5) 35%, rgba(41, 48, 61, 0.6) 35%, rgba(41, 48, 61, 0.8) 45%, rgba(31, 36, 46, 0.5) 45%, rgba(31, 36, 46, 0.8) 75%, rgba(49, 57, 73, 0.5) 75%), linear-gradient(45deg, rgba(20, 24, 31, 0.8) 0%, rgba(41, 48, 61, 0.8) 50%, rgba(82, 95, 122, 0.8) 50%, rgba(133, 146, 173, 0.8) 100%) #313949;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-position-y: 70%;
+    color: white;
+}
+
+
+header{
+    text-align: center;
+    color : white ;
+}
+
+#form{
+    text-align: center;
+    font-size: large;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+#nb_processus{
+    border : 2px solid black ;
+    text-align: center;
+}
+
+#submit{
+    margin-left: 5%;
+}
+
+#processus{
+    margin-top: 100px;
+    margin-left: 150px;
+}
+
+#continuer{
+    margin-left : 80% ;
+}
+
+#random1{
+    margin-left : 1px ;
+}
+
+#label{
+    color : white ;
+}
+
+.Degrade{
+    background-image:-moz-linear-gradient(30deg, white, rgb(114, 110, 107));
+    background-image:-webkit-linear-gradient(30deg, white, rgb(114, 107, 107));
+    background-image:-o-linear-gradient(30deg, white, rgb(114, 107, 107));
+    background-image:linear-gradient(60deg, white, rgb(114, 107, 107));
+}
+.Degrade2{
+    background-image:-moz-linear-gradient(30deg, green, rgb(48, 18, 214));
+    background-image:-webkit-linear-gradient(30deg, green, rgb(48, 18, 214));
+    background-image:-o-linear-gradient(30deg,green, rgb(48, 18, 214));
+    background-image:linear-gradient(60deg, green, rgb(48, 18, 214));
+}
+
+#button{
+    width : 50px ;
+    margin-right : 5% ;
+    margin-left : 5% ;
+}
+
+#button2{
+    display: inline;
+    margin-right : 1% ;
+    margin-left : 1% ;
+}
+
+#continuer{
+    margin-left : 5% ;
+    margin-bottom: 2%;
+}
+
+select {
+    cursor:pointer;
+    font-weight: bold !important;
+    color: #fff !important;
+    background: rgb(55, 68, 55) !important;
+    text-transform: uppercase;
+  }
+
+ #partie1{
+     color : white ;
+ }
+  

@@ -1,0 +1,227 @@
+<html>
+
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <title>Aide</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+
+
+<body>
+    <div class="global">
+        <div class="container">
+
+            <main class="main">
+                <h1>Aide</h1>
+                <center>
+                    <h2>Bienvenue dans votre page d'aide</h2>
+                </center>
+                <center>
+                    <h2 id="1"> Quel est le concept des algorithmes implementés?</h2>
+                    <ul class="menu">
+                        <li><a href="#1">Quel est le concept des algorithmes implementés?</a></li>
+                        <li><a href="#2">FCFS ou PAPS</a></li>
+                        <li><a href="#3">SJF ou LPCD</a></li>
+                        <li><a href="#4">SJF ou LPCD preemptif</a></li>
+                        <li><a href="#5">RR ou AT</a></li>
+                        <li><a href="#6">A.Priorité</a></li>
+                        <li><a href="#7">A.Priorité preemptif</a></li>
+                        <li><a href="#8">Ordonnancement à filles multiniveaux avec recyclage</a></li>
+                        <li><a href="#9">Ordonnancement à filles multiniveaux sans recyclage</a></li>
+                        <li><a href="#10">Ordonnancement à filles multiniveaux sans recyclage preemptif</a></li>
+
+                    </ul>
+
+                </center>
+                <center>
+                    <h2 id="2"> FCFS ou PAPS</h2>
+                    <h2>(First Come First Served=>Premier Arrivé Premier Servi)</h2>
+                </center>
+                <ul>
+                    <center>
+                        <li> --> L'algorithme le plus simple</li>
+                        <li> --> C’est un algorithme sans réquisition qui consiste à allouer le processeur au premier processus de la file des processus prêts.
+
+                        </li>
+                        <li> --> Le processeur ne peut être retiré au processus que s’il le libère volontairement.
+                        </li>
+                        <li> --> INCONVENIENT : Les travaux courts risquent d’attendre longtemps s’ils sont après des travaux longs.
+                        </li>
+                    </center>
+                </ul>
+                <ul class="menu">
+                    <li><a href="#1">Revenir au menu principal</a></li>
+                </ul>
+
+                <center>
+                    <h2 id="3"> SJF ou LPCD</h2>
+                    <h2>(Shortest Job First=>Le Plus Court d'Abord)</h2>
+                </center>
+                <center>
+                    <ul>
+                        <li> --> Le processeur est alloué au travail le plus court (temps demandé).</li>
+                        <li> --> INCONVENIENT : Risque de privation pour les travaux longs.</li>
+                    </ul>
+                    <ul class="menu">
+                        <li><a href="#1">Revenir au menu principal</a></li>
+                    </ul>
+                </center>
+                <center>
+                    <h2 id="4"> SJF ou LPCD preemptif</h2>
+                    <h2>(Shortest Job First=>Le Plus Court d'Abord preemptif)</h2>
+                </center>
+                <ul>
+                    <center>
+                        <li> --> Le processeur est alloué au travail le plus court (temps demandé).</li>
+                        <li> --> La priorité d’un processus est inversement proportionnelle au temps processeur demandé.
+                        </li>
+                        <li>--> >SJF est un cas particulier des algorithmes avec priorité. ✓ Priorité=(1/Temps processeur estimé).
+                        </li>
+                        <li> --> INCONVENIENT : Risque de privation pour les travaux longs.</li>
+                        <li> --> Remarque : L'algorithme "SJF" preemptif aura le critére de "priorité" à prendre en consideration, ce dernier permet d'ailleurs de spécifier la différence qu'il y ait entre A.SJF simple avec A.SJF preemptif.
+                        </li>
+                    </center>
+                </ul>
+                <ul class="menu">
+                    <li><a href="#1">Revenir au menu principal</a></li>
+                </ul>
+                <center>
+                    <h2 id="5">RR ou AT</h2>
+                    <h2>(Rond Robin=>Algorithme du Tourniquet)</h2>
+                </center>
+                <center>
+                    <ul>
+
+                        <li>--> Cet algorithme est très utilisé dans les systèmes en temps partagé et les systèmes multiprogrammés.
+                        </li>
+                        <li> --> Le processeur est alloué aux processus par tranche de temps appelée ‘quantum de temps’.
+                        </li>
+
+                        <li> --> Le processeur est alloué au premier processus de la file des 'processus prêts' pendant un quantum de temps.</li>
+
+                        <li>--> Si le processus n'a pas terminé son exécution, il est recyclé dans la file des 'processus prêts‘.
+                        </li>
+                        <li> --> Le processeur est alloué à un autre processus : ✓ A la fin du quantum de temps ➔ interruption horloge, ✓ Si le processus actif se bloque ➔ attente de ressource physique ou logique, ✓ Fin d’exécution du processus(fin normale
+                            ou erreur ).
+                        </li>
+
+                        <li> --> Les performances de cet algorithme dépendent du quantum de temps(Q): ✓ Si Q est très grand (tend vers l'infini) ➔ équivalent à FIFO. ✓ Si Q est très petit (tend vers 0) ➔ trop de commutations ➔ mauvaise utilisation du processeur.
+                        </li>
+                        <li>--> Choix du quantum de temps ➔ tenir compte du temps de commutation des contextes (0,1 à 0,5 ms).
+                        </li>
+                        <li> --> Quantum de temps ≈10 à 50 ms.
+                        </li>
+
+
+                    </ul>
+                </center>
+                <ul class="menu">
+                    <li><a href="#1">Revenir au menu principal</a></li>
+                </ul>
+                <center>
+                    <h2 id="6"> A.priorité </h2>
+                    <h2>(Algorithme de priorité simple)</h2>
+                </center>
+                <ul>
+                    <center>
+                        <li> --> . L’ordonnanceur à priorité attribue à chaque processus une priorité. Le choix du processus à élire dépend des priorités des processus prêts. Les processus de même priorité sont regroupés dans une file du type FIFO. Il y a
+                            autant de files qu’il y a de niveaux de priorité. L’ordonnanceur choisit le processus le plus prioritaire qui se trouve en tête de file. En général, les processus de même priorité sont ordonnancés selon l’algorithme du tourniquet.
+                        </li>
+                    </center>
+                </ul>
+                <ul class="menu">
+                    <li><a href="#1">Revenir au menu principal</a></li>
+                </ul>
+                <center>
+                    <h2 id="7"> A.priorité preemptif</h2>
+                    <h2>(Algorithme de priorité preemptif)</h2>
+                </center>
+                <ul>
+                    <center>
+                        <li> --> L’ordonnanceur à priorité attribue à chaque processus une priorité. Le choix du processus à élire dépend des priorités des processus prêts. Les processus de même priorité sont regroupés dans une file du type FIFO. Il y a autant
+                            de files qu’il y a de niveaux de priorité. L’ordonnanceur choisit le processus le plus prioritaire qui se trouve en tête de file. En général, les processus de même priorité sont ordonnancés selon l’algorithme du tourniquet.
+                        </li>
+                        <li> --> Remarque : L'algorithme "A.priorité preemptif" aura le critére de "priorité" à prendre en consideration, autrement dit si un processus plus prioritère est créé, en conséquant le processus en cours d'éxecution sera désactivé,
+                            ce dernier permet d'ailleurs de spécifier la différence qu'il y ait entre "A.priorité simple" avec "A.priorité preemptif".
+                        </li>
+                    </center>
+                </ul>
+                <ul class="menu">
+                    <li><a href="#1">Revenir au menu principal</a></li>
+                </ul>
+                <center>
+                    <h2 id="8">Ordonnancement à filles multiniveaux avec recyclage</h2>
+                </center>
+                <center>
+                    <ul>
+                        <li>--> On dispose de n files de ‘processus à l’état prêt’: f0 , f1 , f2 , ..., fn-1 .
+                        </li>
+                        <li>--> A chaque file fi est associé un quantum de temps qi dont la valeur croit avec le rang de la file. </li>
+                        <li>--> Les nouveaux processus sont rangés dans la file f0 .
+                        </li>
+                        <li>--> Lorsqu’un processus de la file fi a épuisé son quantum de temps sans avoir terminé son exécution, il rentre dans la file fi+1.</li>
+                        <li>--> Un processus de la file fi n’est servi que si toutes les files de rang inférieur à i sont vides.
+                        </li>
+                        <li>--> Les processus de la dernière file fn-1 sont recyclés dans la même file. </li>
+                        <li>--> Cet algorithme favorise les processus courts.</li>
+                    </ul>
+                </center>
+                <ul class="menu">
+                    <li><a href="#1">Revenir au menu principal</a></li>
+                </ul>
+                <center>
+                    <h2 id="9">Ordonnancement à filles multiniveaux sans recyclage </h2>
+                </center>
+                <ul>
+                    <li> Définir des classes de processus. Ex : c1, c2, c3</li>
+                    <li>Associer à chaque classe :</li>
+                    <ul>
+                        <center>
+                            <li>--> Une priorité (par rapport aux autres classes) c3 plus prioritaire, …, c1 moins prioritaire;
+                            </li>
+                            <li>--> Définir un algorithme d’ordonnancement c1: Round Robin; c2: Round robin avec priorité; c3 : Priorité;
+                            </li>
+
+                            <li>--> Le processeur est alloué aux processus de la classe la plus prioritaire;</li>
+                            <li>--> On ne change de classe que si la classe la plus prioritaire est vide. </li>
+                            <li>--> REMARQUE : Un processus ne peut pas changer de classe : Un processus d’une classe Ci reste dans la file de cette classe jusqu’à ce qu’il quitte le système.</li>
+                        </center>
+                    </ul>
+                    <ul class="menu">
+                        <li><a href="#1">Revenir au menu principal</a></li>
+                    </ul>
+                    <center>
+                        <h2 id="10">Ordonnancement à filles multiniveaux sans recyclage preemptif</h2>
+                    </center>
+                    <ul>
+                        <center>
+                            <li>--> Une priorité (par rapport aux autres classes) c3 plus prioritaire, …, c1 moins prioritaire;
+                            </li>
+                            <li>--> Définir un algorithme d’ordonnancement c1: Round Robin; c2: Round robin avec priorité; c3 : Priorité;
+                            </li>
+
+                            <li>--> Le processeur est alloué aux processus de la classe la plus prioritaire;</li>
+                            <li>--> On ne change de classe que si la classe la plus prioritaire est vide. </li>
+                            <li>--> Remarque1 : Un processus ne peut pas changer de classe : Un processus d’une classe Ci reste dans la file de cette classe jusqu’à ce qu’il quitte le système.</li>
+                            <li> --> Remarque2 : L'algorithme "A.Ordonnancement à filles multiniveaux sans recyclage preemptif" aura le critére de "priorité" à prendre en consideration, autrement dit si un processus plus prioritère est créé, en conséquant
+                                le processus en cours d'éxecution sera désactivé, ce dernier permet d'ailleurs de spécifier la différence qu'il y ait entre "A.Ordonnancement à filles multiniveaux sans recyclage simple" avec "A.Ordonnancement à filles
+                                multiniveaux sans recyclage preemptif preemptif".
+                            </li>
+                        </center>
+                    </ul>
+                    <ul class="menu">
+                        <li><a href="#1">Revenir au menu principal</a></li>
+                    </ul>
+            </main>
+
+        </div>
+    </div>
+</body>
+
+
+</html>
