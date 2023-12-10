@@ -1,0 +1,227 @@
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body {
+  background-image: url(Images/SL.120219.25650.43.jpg);
+  background-size: cover;
+  color: transparent;
+}
+.menu-bar {
+  background-color: rgba(240, 248, 255, 0);
+  text-align: right;
+}
+.menu-bar ul {
+  display: inline-flex;
+  list-style: none;
+  color: rgb(0, 4, 255);
+  margin-right: 70px;
+}
+.menu-bar ul li {
+  text-align: center;
+  border: 3px solid rgb(3, 154, 255);
+  border-radius: 50px;
+  width: 150px;
+  margin: 20px;
+  padding: 10px;
+}
+.menu-bar ul li a {
+  text-decoration: none;
+  background: #0a6cec;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.active,
+.menu-bar ul li:hover {
+  background: rgb(37, 166, 252);
+  border-radius: 30px;
+}
+
+.container1 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  position: absolute;
+  top: 50%;
+  left: 26%;
+}
+.container2 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+.container3 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  position: absolute;
+  top: 50%;
+  left: 74%;
+}
+.container4 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  position: absolute;
+  top: 100%;
+  left: 26%;
+}
+.container5 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+}
+.container6 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  position: absolute;
+  top: 100%;
+  left: 74%;
+}
+.content h1 {
+  font-size: 28px;
+}
+.content1 {
+  font-size: 20px;
+}
+
+.box {
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: #111845a6;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgb(23, 32, 90);
+  border: 2px solid #2a3cad;
+  color: white;
+  padding: 20px;
+}
+
+.box:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: 0.5s;
+  pointer-events: none;
+}
+
+.box:hover:before {
+  left: -50%;
+  transform: skewX(-5deg);
+}
+
+.box .content {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  border: 1px solid rgb(37, 166, 252); /*fdb;*/
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 5px 10px rgba(9, 0, 0, 0.5);
+}
+
+.box span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+
+.box span:nth-child(1) {
+  transform: rotate(0deg);
+}
+
+.box span:nth-child(2) {
+  transform: rotate(90deg);
+}
+
+.box span:nth-child(3) {
+  transform: rotate(180deg);
+}
+
+.box span:nth-child(4) {
+  transform: rotate(270deg);
+}
+
+.box span:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #50dfdb;
+  animation: animate 4s linear infinite;
+}
+
+.box2 span:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #50dfdb;
+  animation: animate 4s linear infinite;
+}
+@keyframes animate {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  50% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  50.1% {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+
+  100% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+.boutton {
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 32%;
+  left: 22%;
+}
+.button {
+  min-width: 160px;
+  min-height: 35px;
+  font-family: "Nunito", sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  font-weight: 700;
+  color: #0e6ce7;
+  background: #20cfcf;
+  background: linear-gradient(
+    90deg,
+    rgb(0, 110, 255) 0%,
+    rgba(79, 209, 197, 1) 100%
+  );
+  border: none;
+  transition: all 0.3s ease-in-out 0s;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  padding: 10px;
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation FCFS_D</title>
+    <link rel="stylesheet" href="style5.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+<body>
+    <header>
+        <h1 style="background-color: rgba(0, 0, 255, 0.26); color:aliceblue ; text-align: center;">Simulation Dynamique"Premier Arrivé Premier Servi"</h1>
+    </header>
+
+    <div class="menu-bar">
+      <ul>
+        <li><a href="../../Accueil.html">Acceuil</a></li>
+        <li><a href="../../aide/aide3.html" target="_blank">Aide</a></li>
+        <li><a href="../../guide_utilisation .pdf" target="_blank">Guide D'utilisation</a></li>
+        <li><a href="#">Choix d'Algorithmes</a>
+        <div class="sub-menu">
+          <ul>
+            <li><a href="SJF_D.html">Le Plus Court D'abbord</a></li>
+            <li><a href="RR_D.html">Round Robin</a></li>
+            <li><a href="PrioS_D.html">Priorité Statique et Dynamique</a></li>
+            <li><a href="FMSR_D.html">Files Multiniveaux Sans Recyclage</a></li>
+            <li><a href="FMAR_D.html">Files Multiniveaux Avec Recyclage</a></li>
+          </ul>
+        </div>
+        </li>
+        <li><a href="../../Formulaire/formulaire.html">Simulation Statique</a></li>
+      </ul>
+    </div>
+
+    <div id= "inputs">
+        <input class='form-control' id="textPr" placeholder="Numéro du Processus" style="width: 98%; position: absolute;margin-top: 4%; margin-left: 1%;">
+        <input class='form-control' id="textEx" placeholder="Temps d'execution" style="width: 98%; position: absolute;margin-top: 27%; margin-left: 1%;">
+        <input class='form-control' id="textPrio" placeholder="Priorité" style="width: 98%; position: absolute;margin-top: 50%; margin-left: 1%;">
+        <input class='form-control' id="textNbI" placeholder="Nombre d'interruptions" style="width: 98%;position: absolute;margin-top: 73%; margin-left: 1%;">
+        <button onclick="Creer()" class="creer btn-primary" style="position: absolute;top: 88%;left: 55%;width: 44%;height: 12%; border-radius: 20px;">Creer</button>
+    </div>
+
+    <div class="d-grid gap-2 d-md-block">
+      <button onclick="Stop()" class="pause btn-primary" style="position: absolute;top: 11%;left: 25%;width: 6%;height: 6%;">Pause</button>
+      <button onclick="Ordonnanceur_FIFO()" class="continuer btn-primary" style="position: absolute;top: 11%;left: 50%;width: 8%;height: 6%;">Continuer</button>
+    </div>
+    <button onclick="Ordonnanceur_FIFO()" class="button ">Simuler PAPS</button>
+    <button onclick="Activer()" class="actdynamique btn-success">Activer</button>
+    <button onclick="Desactiver()" class="desdynamique btn-info">Desactiver</button>
+    <button onclick="Bloquer()" class="blodynamique btn-danger">Bloquer</button>
+    <button onclick="Reveiller()" class="revdynamique btn-warning">Reveiller</button>
+    <button onclick="Detruire()" class="detdynamique btn-dark">Detruire</button>    
+      
+    
+    <label for="Vitesse" class="vitesse"> <strong> Vitesse(ms/op): </strong> </label>
+    <select type="number" name="Vitesse" class="vit">
+        <option value="500"> 500 </option>
+        <option value="1000"> 1000 </option>
+        <option value="2000"> 2000 </option>
+        <option value="3000"> 3000 </option>
+        <option value="4000"> 4000 </option>
+    </select>
+    
+
+    <div id="bip" class="display"></div>
+
+
+      <table class="fileAttente">
+          <caption>File des Processus en Attente</caption>
+        <tbody>
+            <tr>
+                <td class="filedAttente"></td>
+                <td class="filedAttente"></td>
+                <td class="filedAttente"></td>
+                <td class="filedAttente"></td>
+                <td class="filedAttente"></td>
+                <td class="filedAttente"></td>
+                <td class="filedAttente"></td>
+                <td class="filedAttente"></td>
+                <td class="filedAttente"></td>
+                <td class="filedAttente"></td>
+            </tr>
+        </tbody>
+      </table>
+
+      <table class="fileblocage">
+        <caption>File des Processus Bloquee</caption>
+      <tbody>
+          <tr>
+            <td class = 'filedeblocage'></td>
+            <td class = 'filedeblocage'></td>
+            <td class = 'filedeblocage'></td>
+            <td class = 'filedeblocage'></td>
+            <td class = 'filedeblocage'></td>
+            <td class = 'filedeblocage'></td>
+            <td class = 'filedeblocage'></td>
+            <td class = 'filedeblocage'></td>
+            <td class = 'filedeblocage'></td>
+            <td class = 'filedeblocage'></td>
+          </tr>
+      </tbody>
+    </table>
+    <div class="pro">
+        <table class="processeur table-bordered">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="processeur"></td>
+                </tr>
+            </tbody>
+          </table>
+    </div>
+    
+    <table class="tablecle">
+      <tbody>
+        <tr>
+          <td class="jaune"></td>
+          <td> En attente</td>
+          <td class="rouge"></td>
+          <td> Bloqué</td>
+          <td class="vert"></td>
+          <td>En train d'execution</td>
+          
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="container-fluid">
+        <h3 style="position: absolute; margin-left: 64.3%; margin-top: 6.5%; color: aliceblue; font-family: bold;">PROCESSEUR</h3>
+    </div>
+    
+        <h3 class="msg"></h3>  
+
+        <div class="container-fluid">
+            <table class="cad table-bordered">
+                <thead>
+                    <th class="cad"></th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="cad"></td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>  
+
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.0.1/lib/anime.min.js"></script>
+    <script src="Anime_D.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+
+
+</body>
+</html>
